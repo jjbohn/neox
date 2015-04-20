@@ -1,24 +1,22 @@
 defmodule NeoxTest do
+  defmodule Store do
+    defstruct name: nil, description: nil
+  end
+
   import Neox.Query
   use ExUnit.Case
 
   test "the truth" do
-    create(john: %User{name: "john"})
+    create(store: %Store{name: "Custom Store"})
     |> flush
 
-    # filter = [john: %User{name: "john"}]
-    # match(filter)
 
-    filter = %User{name: "john"}
-    match(john: filter)
+    # match(store: %Store{name: "Custom Store"})
+    # |> delete(:store)
 
-    john = match(john: %User{name: "john"})
-           |> return(:john)
+    # DROP CONSTRAINT ON (book:Book) ASSERT book.isbn IS UNIQUE
 
-    match(john: %User{name: "john"})
-    |> delete(:john)
-
-    # assert john == %User{name: "john"}
+    #drop_constraint(store: %Store{}) assert store.name is unique
 
     # create(%{john: %User{name: "john"}})
     # |> create(%{marie: %User{name: "marie"}})

@@ -39,10 +39,14 @@ defmodule Neox.Query do
   def expr([{action, {key, struct}} | _]) do
     alias = to_string(key)
     action = String.upcase(to_string(action))
-    struct_name = String.slice(to_string(struct.__struct__), 7..-1)
+    struct_name = List.last(String.split(to_string(struct.__struct__), "."))
 
     statement = action  <> "(" <> alias <> ":#{struct_name} {props})"
 
-    [%{statement: statement, parameters: %{props: struct}}]
+    [%{statement: statement, parameters: %{props: kill_nil_values(struct)}}]
+  end
+
+  defp kill_nil_values(struct) do
+    Enum.into(Enum.filter(Map.from_struct(struct), fn ({_, val}) -> !is_nil(val) end), %{})
   end
 end
