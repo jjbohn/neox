@@ -1,34 +1,38 @@
 defmodule NeoxTest do
-  defmodule User do
-    defstruct name: nil, email: nil
-  end
-
   import Neox.Query
   use ExUnit.Case
 
-  test "the truth" do
-    create(john: %User{name: "John", email: "jjbohn@gmail.com"})
+  setup do
+    create(john: %User{name: "John", email: "jjbohn@gmail.com"},
+           marie: %User{name: "Marie", email: "mimimmartin@gmail.com"})
     |> flush
 
-    match(john: %User{name: "John"})
-    |> delete(:john)
+    on_exit fn ->
+      match(users: %User{})
+      |> delete(:users)
+    end
+  end
 
-    match(users: %User{})
-    |> delete(:users)
+  test "basic node create" do
+    users = match(users: %User{})
+            |> return(:users)
 
-    # DROP CONSTRAINT ON (book:Book) ASSERT book.isbn IS UNIQUE
+    assert Enum.count(users) == 2
 
-    #drop_constraint(store: %Store{}) assert store.name is unique
+    assert List.first(users) == %User{name: "John", email: "jjbohn@gmail.com"}
+    assert List.last(users) == %User{name: "Marie", email: "mimimmartin@gmail.com"}
+  end
 
-    # create(%{john: %User{name: "john"}})
-    # |> create(%{marie: %User{name: "marie"}})
-    # |> return(:john)
+  test "single node retrieval" do
+    john = match(john: %User{})
+            |> return(:john)
+            |> List.first
 
+    assert john == %User{name: "John", email: "jjbohn@gmail.com"}
+  end
 
-    # match({john: %{User{name: "John"}}, marie: %{User{name: "Marie"}}})
-    # |> create_unique(:john, -%{Married}->, :marie)
-
-    # match({me: %{User}})
-    # |> return
+  test "relationship creation" do
+    # match(john: %User{name: "John"})
+    # |> match(john: %User{name: "Marie"})
   end
 end

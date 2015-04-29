@@ -1,3 +1,3 @@
 defmodule User do
-  defstruct name: nil
+  defstruct name: nil, email: nil
 end

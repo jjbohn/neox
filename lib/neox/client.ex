@@ -2,7 +2,7 @@ defmodule Neox.Client do
   use HTTPotion.Base
 
   def process_url(_) do
-    "http://neo4j.dev:7474/db/data/transaction/commit"
+    "http://localhost:7474/db/data/transaction/commit"
   end
 
   def process_request_headers(_) do
@@ -13,6 +13,7 @@ defmodule Neox.Client do
 
   def process_response_body(body) do
     body
+    |> Poison.decode!
   end
 
   def process_request_body(body) do
